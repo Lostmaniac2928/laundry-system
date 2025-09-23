@@ -1,4 +1,3 @@
-import path from 'path'; // Import path module
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
@@ -27,26 +26,16 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
-// --- Deployment Setup ---
-if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve();
-  // Set the client/dist folder as a static folder
-  app.use(express.static(path.join(__dirname, '/client/dist')));
-
-  // For any route that is not an API route, serve the index.html
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  );
-} else {
-  // A simple route to test if the server is running in development
-  app.get('/', (req, res) => {
-    res.send('API is running...');
-  });
-}
+// --- Corrected Test Route ---
+// The path should be a simple '/'
+app.get('/', (req, res) => {
+  res.send('API is running successfully...');
+});
 
 // Custom error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
