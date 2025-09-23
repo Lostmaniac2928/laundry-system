@@ -1,15 +1,13 @@
 import axios from 'axios';
 
-const API_URL = '/api/orders';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-// Fetch the logged-in user's orders
 export const getMyOrders = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axios.get(`${API_BASE_URL}/api/orders`);
   return response.data;
 };
 
-// Create a new order
 export const createOrder = async (orderData) => {
-  const response = await axios.post(API_URL, orderData);
+  const response = await axios.post(`${API_BASE_URL}/api/orders`, orderData);
   return response.data;
 };

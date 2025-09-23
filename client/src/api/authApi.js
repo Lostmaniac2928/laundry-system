@@ -1,22 +1,10 @@
 import axios from 'axios';
 
-// The base URL for our backend API
-const API_URL = '/api/auth'; // Using a relative URL for proxy
+// Use the full URL from the environment variable for production
+const API_URL = import.meta.env.VITE_API_URL || '';
 
-// Send a request to the backend to generate and send an OTP
-export const sendOtp = async (phoneNumber) => {
-  const response = await axios.post(`${API_URL}/send-otp`, { phoneNumber });
+// Fetch all services from the backend
+export const getServices = async () => {
+  const response = await axios.get(`${API_URL}/api/services`);
   return response.data;
 };
-
-// Send the phone number and OTP to the backend for verification
-export const verifyOtp = async (phoneNumber, otp) => {
-  const response = await axios.post(`${API_URL}/verify-otp`, { phoneNumber, otp });
-  return response.data;
-};
-
-// Send a request to log the user out
-export const logout = async () => {
-    const response = await axios.post(`${API_URL}/logout`);
-    return response.data;
-}

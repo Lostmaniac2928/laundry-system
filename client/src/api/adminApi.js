@@ -1,35 +1,33 @@
 import axios from 'axios';
 
-const ADMIN_API_URL = '/api/admin';
-const SERVICES_API_URL = '/api/services';
-const ORDERS_API_URL = '/api/orders';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-// --- Dashboard ---
 export const getDashboardStats = async () => {
-  const response = await axios.get(`${ADMIN_API_URL}/stats`);
+  const response = await axios.get(`${API_BASE_URL}/api/admin/stats`);
   return response.data;
 };
 
-// --- Services ---
 export const createService = async (serviceData) => {
-    const response = await axios.post(SERVICES_API_URL, serviceData);
-    return response.data;
-}
-export const updateService = async (id, serviceData) => {
-    const response = await axios.put(`${SERVICES_API_URL}/${id}`, serviceData);
-    return response.data;
-}
-export const deleteService = async (id) => {
-    const response = await axios.delete(`${SERVICES_API_URL}/${id}`);
+    const response = await axios.post(`${API_BASE_URL}/api/services`, serviceData);
     return response.data;
 }
 
-// --- Orders ---
-export const getAllOrders = async () => {
-    const response = await axios.get(`${ORDERS_API_URL}/all`);
+export const updateService = async (id, serviceData) => {
+    const response = await axios.put(`${API_BASE_URL}/api/services/${id}`, serviceData);
     return response.data;
 }
+
+export const deleteService = async (id) => {
+    const response = await axios.delete(`${API_BASE_URL}/api/services/${id}`);
+    return response.data;
+}
+
+export const getAllOrders = async () => {
+    const response = await axios.get(`${API_BASE_URL}/api/orders/all`);
+    return response.data;
+}
+
 export const updateOrderStatus = async (id, status) => {
-    const response = await axios.put(`${ORDERS_API_URL}/${id}/status`, { status });
+    const response = await axios.put(`${API_BASE_URL}/api/orders/${id}/status`, { status });
     return response.data;
 }
