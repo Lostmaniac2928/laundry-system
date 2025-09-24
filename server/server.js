@@ -15,10 +15,10 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 connectDB();
 const app = express();
 
-// --- Configure CORS ---
+// --- Corrected CORS Configuration ---
 const corsOptions = {
   origin: 'https://laundry2928.netlify.app', // Your Netlify frontend URL
-  credentials: true, // Allows cookies to be sent
+  credentials: true, // This is the crucial line that allows cookies
 };
 app.use(cors(corsOptions));
 
