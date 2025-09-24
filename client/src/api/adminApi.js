@@ -15,7 +15,7 @@ export const createService = async (serviceData) => {
     return response.data;
 }
 export const updateService = async (id, serviceData) => {
-    const response = await axios.put(`${API_-BASE_URL}/api/services/${id}`, serviceData, options);
+    const response = await axios.put(`${API_BASE_URL}/api/services/${id}`, serviceData, options);
     return response.data;
 }
 export const deleteService = async (id) => {
