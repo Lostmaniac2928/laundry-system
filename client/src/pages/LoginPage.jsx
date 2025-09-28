@@ -10,7 +10,6 @@ const LoginPage = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,10 +28,8 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setSuccessMessage('');
     try {
-      const response = await sendOtp(phoneNumber);
-      setSuccessMessage(response.message); // Set success message from backend
+      await sendOtp(phoneNumber);
       setStep(2);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
@@ -47,7 +44,10 @@ const LoginPage = () => {
     setError('');
     try {
         const data = await verifyOtp(phoneNumber, otp);
-        dispatch(setCredentials(data));
+        // This is the crucial part: dispatch the action
+        dispatch(setCredentials(data)); 
+        
+        // Now navigate based on the data received
         const destination = from || (data.role === 'admin' ? '/admin/dashboard' : '/');
         navigate(destination);
     } catch (err) {
@@ -82,9 +82,7 @@ const LoginPage = () => {
       ) : (
         <form onSubmit={handleVerifyOtp} className="login-form">
           <h2>Verify Code</h2>
-          {/* Display success message here */}
-          {successMessage && <p className="success-message">{successMessage}</p>}
-          <p>Enter the 6-digit code sent to {phoneNumber}</p>
+          <p>Enter the 6-digit code sent to your server logs.</p>
           <div className="form-group">
             <label htmlFor="otp">Verification Code</label>
             <input
