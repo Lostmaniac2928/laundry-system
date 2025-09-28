@@ -20,32 +20,21 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-// --- API Routes (These must come first) ---
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Deployment Setup
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get('*', (req, res) =>
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+);
 
-// --- Deployment Setup (This must come after API routes) ---
-if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, '/client/dist')));
-
-  // Any request that doesn't match an API route will be sent the main index.html file
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  );
-} else {
-  // A test route for development
-  app.get('/', (req, res) => {
-    res.send('API is running...');
-  });
-}
-
-
-// --- Error Handlers (These must come last) ---
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
