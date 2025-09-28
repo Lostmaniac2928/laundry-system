@@ -1,22 +1,14 @@
-import axios from 'axios';
+import api from './axiosConfig';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-const options = { withCredentials: true };
-
-// Add a new location for the logged-in user
 export const addLocation = async (locationData) => {
-  const response = await axios.post(`${API_BASE_URL}/api/users/locations`, locationData, options);
+  const response = await api.post('/api/users/locations', locationData);
   return response.data;
 };
-
-// Get the logged-in user's profile data
 export const getProfile = async () => {
-    const response = await axios.get(`${API_BASE_URL}/api/users/profile`, options);
+    const response = await api.get('/api/users/profile');
     return response.data;
 }
-
-// Get the logged-in user's order stats
 export const getUserStats = async () => {
-    const response = await axios.get(`${API_BASE_URL}/api/users/stats`, options);
+    const response = await api.get('/api/users/stats');
     return response.data;
 }
