@@ -5,19 +5,18 @@ import User from '../models/userModel.js';
 const protect = async (req, res, next) => {
   let token;
 
-  // Read the JWT from the httpOnly cookie
-  token = req.cookies.jwt;
-
-  if (token) {
+  // Check for the Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
+      // Get token from header (e.g., "Bearer <token>")
+      token = req.headers.authorization.split(' ')[1];
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
-      // Attach user to the request object, excluding password/OTP info
       req.user = await User.findById(decoded.userId).select('-otp -otpExpiry');
       
       next();
     } catch (error) {
-      console.error(error);
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
   } else {
