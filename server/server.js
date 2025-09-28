@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
@@ -15,28 +16,30 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 connectDB();
 const app = express();
 
-app.set('trust proxy', 1);
-
-// --- Corrected and Final CORS Configuration ---
-app.use(cors({
-  origin: 'https://laundry2928.netlify.app',
-  credentials: true,
-}));
-
+app.use(cors()); // Keep basic CORS for flexibility
 app.use(express.json());
 app.use(cookieParser());
 
-// API Routes
+// --- API Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.get('/', (req, res) => {
-  res.send('API is running successfully...');
-});
 
+// --- Deployment Setup ---
+const __dirname = path.resolve(); // Get the current directory path
+// Set the client/dist folder as the static folder
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+// For any route that is not an API route, send the frontend's index.html
+app.get('*', (req, res) =>
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+);
+
+
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 

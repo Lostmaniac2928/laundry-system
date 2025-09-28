@@ -1,14 +1,11 @@
-import api from './axiosConfig';
+import axios from 'axios';
 
-export const sendOtp = async (phoneNumber) => {
-  const response = await api.post('/api/auth/send-otp', { phoneNumber });
+export const getDashboardStats = async () => {
+  const response = await axios.get('/api/admin/stats');
   return response.data;
 };
-export const verifyOtp = async (phoneNumber, otp) => {
-  const response = await api.post('/api/auth/verify-otp', { phoneNumber, otp });
-  return response.data;
-};
-export const logout = async () => {
-  const response = await api.post('/api/auth/logout');
-  return response.data;
-};
+export const createService = async (serviceData) => {
+    const response = await axios.post('/api/services', serviceData);
+    return response.data;
+}
+// ... and so on for updateService, deleteService, etc.

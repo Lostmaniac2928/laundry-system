@@ -1,14 +1,21 @@
-import api from './axiosConfig';
+import axios from 'axios';
+
+const getToken = () => JSON.parse(localStorage.getItem('userInfo'))?.token;
 
 export const addLocation = async (locationData) => {
-  const response = await api.post('/api/users/locations', locationData);
+  const config = { headers: { Authorization: `Bearer ${getToken()}` } };
+  const response = await axios.post('/api/users/locations', locationData, config);
   return response.data;
 };
+
 export const getProfile = async () => {
-    const response = await api.get('/api/users/profile');
+    const config = { headers: { Authorization: `Bearer ${getToken()}` } };
+    const response = await axios.get('/api/users/profile', config);
     return response.data;
 }
+
 export const getUserStats = async () => {
-    const response = await api.get('/api/users/stats');
+    const config = { headers: { Authorization: `Bearer ${getToken()}` } };
+    const response = await axios.get('/api/users/stats', config);
     return response.data;
 }
