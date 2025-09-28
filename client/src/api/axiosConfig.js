@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../app/store'; // Import the Redux store
+import store from '../app/store';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
@@ -7,15 +7,21 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// This interceptor will add the token to every request
 api.interceptors.request.use(
   (config) => {
-    // Get the current state from the Redux store
+    // *** THIS IS THE TEST ***
+    console.log("--- Axios Interceptor Firing ---");
+
     const state = store.getState();
     const token = state.auth.userInfo?.token;
 
+    console.log("Token found in Redux state:", token);
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("--- Authorization header SET ---");
+    } else {
+      console.log("--- Authorization header NOT SET ---");
     }
     
     return config;
