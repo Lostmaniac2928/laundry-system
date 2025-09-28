@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     buildCommand: |
-      npm install
+      npm ci
       npm run build --prefix client
     startCommand: npm start --prefix server
     envVars:
