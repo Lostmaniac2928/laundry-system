@@ -3,6 +3,7 @@ services:
     name: laundry-system
     env: node
     plan: free
+    nodejs: 20 # Specify a stable Node.js version
     buildCommand: |
       npm install -g pnpm
       pnpm install
