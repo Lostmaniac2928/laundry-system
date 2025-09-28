@@ -6,7 +6,6 @@ import { logout as logoutApiCall } from '../../api/authApi';
 
 const Navbar = ({ toggleSidebar }) => {
   const { userInfo } = useSelector((state) => state.auth);
-  const { cartItems } = useSelector((state) => state.cart); // Get cart items
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,33 +23,20 @@ const Navbar = ({ toggleSidebar }) => {
     <header className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          LaundryMat
+          WLS
         </Link>
         <div className="menu-icon" onClick={toggleSidebar}>
           ☰
         </div>
         <nav className="nav-menu">
-          <Link to="/cart" className="nav-links">
-            <div className="cart-icon">
-              🛒
-              {cartItems.length > 0 && <span className="cart-badge">{cartItems.reduce((a, c) => a + c.qty, 0)}</span>}
-            </div>
-          </Link>
-          <Link to="/" className="nav-links">Home</Link>
-          <Link to="/about" className="nav-links">About</Link>
+          <Link to="/" className="nav-links">Services</Link>
+          <Link to="/pricing" className="nav-links">Pricing</Link>
+          <Link to="/how-it-works" className="nav-links">How It Works</Link>
           <Link to="/contact" className="nav-links">Contact</Link>
           {userInfo ? (
-            <div className="nav-user-info">
-              {userInfo.role === 'admin' && (
-                <Link to="/admin/dashboard" className="nav-links nav-button">Admin</Link>
-              )}
-              <Link to="/profile/dashboard" className="nav-links profile-link">
-                {userInfo.phoneNumber}
-              </Link>
-              <button onClick={handleLogout} className="nav-button logout">Logout</button>
-            </div>
+             <Link to="/profile/dashboard" className="nav-links nav-button">Account</Link>
           ) : (
-            <Link to="/login" className="nav-links nav-button">Login</Link>
+            <Link to="/login" className="nav-links nav-button">Account</Link>
           )}
         </nav>
       </div>
