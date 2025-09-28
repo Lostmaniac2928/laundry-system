@@ -15,4 +15,17 @@
     "client",
     "server"
   ]
+}{
+  "name": "laundromat-management",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "pnpm --filter server start",
+    "server": "pnpm --filter server dev",
+    "client": "pnpm --filter client dev",
+    "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
+    "build": "pnpm --filter client build"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
 }
