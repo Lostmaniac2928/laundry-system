@@ -462,4 +462,12 @@ button { /* Basic reset for all buttons */
     font-weight: bold;
 }
 
+/* --- Form Messages --- */
+.success-message {
+    color: #28a745; /* Green */
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
 

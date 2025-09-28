@@ -10,19 +10,17 @@ const LoginPage = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-
-  const { userInfo } = useSelector((state) => state.auth);
   
-  // Get the intended destination (e.g., '/checkout') from the state
+  const { userInfo } = useSelector((state) => state.auth);
   const from = location.state?.from || null;
 
   useEffect(() => {
     if (userInfo) {
-      // If user is already logged in, redirect them
       navigate(from || (userInfo.role === 'admin' ? '/admin/dashboard' : '/'));
     }
   }, [navigate, userInfo, from]);
@@ -31,11 +29,13 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccessMessage('');
     try {
-      await sendOtp(phoneNumber);
+      const response = await sendOtp(phoneNumber);
+      setSuccessMessage(response.message); // Set success message from backend
       setStep(2);
     } catch (err) {
-      setError('Failed to send OTP. Please try again.');
+      setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -46,16 +46,12 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const data = await verifyOtp(phoneNumber, otp);
-      dispatch(setCredentials(data));
-      
-      // *** THIS IS THE KEY CHANGE ***
-      // Prioritize redirecting to the 'from' location (like '/checkout')
-      const destination = from || (data.role === 'admin' ? '/admin/dashboard' : '/');
-      navigate(destination);
-
+        const data = await verifyOtp(phoneNumber, otp);
+        dispatch(setCredentials(data));
+        const destination = from || (data.role === 'admin' ? '/admin/dashboard' : '/');
+        navigate(destination);
     } catch (err) {
-      setError('Invalid OTP.');
+      setError(err.response?.data?.message || 'Invalid OTP.');
     } finally {
       setLoading(false);
     }
@@ -66,7 +62,7 @@ const LoginPage = () => {
       {step === 1 ? (
         <form onSubmit={handleSendOtp} className="login-form">
           <h2>Login to Continue</h2>
-          <p>We'll send you a one-time password.</p>
+          <p>We'll send a verification code to your phone.</p>
           <div className="form-group">
             <label htmlFor="phone">Phone Number</label>
             <input
@@ -85,10 +81,12 @@ const LoginPage = () => {
         </form>
       ) : (
         <form onSubmit={handleVerifyOtp} className="login-form">
-          <h2>Verify OTP</h2>
+          <h2>Verify Code</h2>
+          {/* Display success message here */}
+          {successMessage && <p className="success-message">{successMessage}</p>}
           <p>Enter the 6-digit code sent to {phoneNumber}</p>
           <div className="form-group">
-            <label htmlFor="otp">OTP Code</label>
+            <label htmlFor="otp">Verification Code</label>
             <input
               type="text"
               id="otp"
