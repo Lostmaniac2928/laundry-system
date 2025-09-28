@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: laundry-system
+    env: node
+    plan: free
+    buildCommand: |
+      npm install
+      npm run build --prefix client
+    startCommand: npm start --prefix server
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
