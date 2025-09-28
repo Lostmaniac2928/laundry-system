@@ -1,6 +1,6 @@
-import api from './axiosConfig';
+import axios from 'axios';
 
 export const getServices = async () => {
-  const response = await api.get('/api/services');
+  const response = await axios.get('/api/services');
   return response.data;
 };
