@@ -1,6 +1,8 @@
+import path from 'path';
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
+import cors from 'cors'; // Import cors
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
@@ -11,31 +13,31 @@ import adminRoutes from './routes/adminRoutes.js';
 
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
-// Connect to the database
 connectDB();
-
 const app = express();
+
+app.use(cors()); // Use CORS middleware
 
 app.use(express.json());
 app.use(cookieParser());
 
-// --- API Routes ---
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
-// --- Corrected Test Route ---
-// The path should be a simple '/'
-app.get('/', (req, res) => {
-  res.send('API is running successfully...');
-});
+// Deployment Setup
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get('*', (req, res) =>
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+);
 
-// Custom error handling middleware
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
