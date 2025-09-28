@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
-import cors from 'cors'; // Import cors
+import cors from 'cors';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
@@ -16,8 +16,7 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 connectDB();
 const app = express();
 
-app.use(cors()); // Use CORS middleware
-
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
