@@ -2,12 +2,15 @@ import path from 'path';
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
+import history from 'connect-history-api-fallback'; // Import the new middleware
 import connectDB from './config/db.js';
+
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 connectDB();
@@ -24,16 +27,15 @@ app.use('/api/admin', adminRoutes);
 
 // --- DEPLOYMENT SETUP ---
 const __dirname = path.resolve();
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/client/dist')));
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  );
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running...');
-  });
-}
+// Use the history middleware
+app.use(history());
+// Serve the static files from the React build
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+// Test route (this will now be overridden by the static serving in production)
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
 
 // --- ERROR HANDLING ---
 app.use(notFound);
