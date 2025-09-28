@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Function to get user info from local storage safely
 const getUserInfoFromStorage = () => {
   try {
     const userInfoString = localStorage.getItem('userInfo');
@@ -20,12 +19,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials(state, action) {
+      // *** THIS IS THE TEST ***
+      console.log("--- INSIDE setCredentials ---");
+      console.log("Payload received:", action.payload);
+
       state.userInfo = action.payload;
-      // This is the crucial part: saving the data to localStorage
       try {
         localStorage.setItem('userInfo', JSON.stringify(action.payload));
+        console.log("--- Successfully set userInfo in localStorage ---");
       } catch (error) {
-        console.error("Failed to save userInfo to localStorage", error);
+        console.error("--- FAILED to save userInfo to localStorage ---", error);
       }
     },
     logout(state) {
