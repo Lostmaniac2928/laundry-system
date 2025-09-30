@@ -2,7 +2,8 @@ import path from 'path';
 import express from 'express';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
-import history from 'connect-history-api-fallback'; // Import the new middleware
+import cors from 'cors';
+import history from 'connect-history-api-fallback';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
@@ -17,6 +18,7 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // --- API ROUTES ---
 app.use('/api/auth', authRoutes);
@@ -25,17 +27,13 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
+
 // --- DEPLOYMENT SETUP ---
 const __dirname = path.resolve();
-// Use the history middleware
 app.use(history());
-// Serve the static files from the React build
 app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get('/', (req, res) => res.send('API is running...'));
 
-// Test route (this will now be overridden by the static serving in production)
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
 
 // --- ERROR HANDLING ---
 app.use(notFound);
