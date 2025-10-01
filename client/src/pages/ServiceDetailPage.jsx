@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { addToCart } from '../app/features/cartSlice';
@@ -8,11 +8,14 @@ const ServiceDetailPage = () => {
   const dispatch = useDispatch();
   const { services, loading } = useSelector((state) => state.services);
   
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
   const service = services.find(s => s._id === serviceId);
 
   const handleAddToCart = (pkg) => {
     const itemToAdd = {
-        packageId: pkg._id, // This is the unique ID for the cart item
+        packageId: pkg._id,
         name: pkg.name,
         price: pkg.price,
         serviceId: service._id,
@@ -20,47 +23,49 @@ const ServiceDetailPage = () => {
         imageUrl: service.imageUrl,
     };
     dispatch(addToCart(itemToAdd));
-    alert(`${pkg.name} added to cart!`);
+    
+    // Logic for the toast notification
+    setToastMessage(`${pkg.name} added to cart!`);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000); // Hide after 2 seconds
   };
 
   if (loading) {
-    return <div className="container"><p>Loading...</p></div>;
+    return <div className="container" style={{paddingTop: '80px'}}><p>Loading...</p></div>;
   }
-
-  if (!service) {
-    return (
-        <div className="container">
-            <h2>Service Not Found</h2>
-            <Link to="/">Back to Home</Link>
-        </div>
-    );
-  }
-
+  
+  // ... (rest of the component remains the same)
+  // ... but include the toast notification JSX at the end
+  
   return (
-    <div className="container">
-      <div className="service-detail-header">
-        <img src={service.imageUrl} alt={service.name} className="service-detail-image"/>
-        <div className="service-detail-info">
-            <h1>{service.name}</h1>
-            <p>{service.description}</p>
-        </div>
+    <div className="service-detail-page-container">
+      <div className="service-detail-left">
+        <h1>{service.name}</h1>
+        <p>{service.description}</p>
       </div>
       
-      <div className="packages-section">
+      <div className="service-packages-right">
         <h2>Select a Package</h2>
         <div className="packages-list">
-            {service.packages.length > 0 ? service.packages.map(pkg => (
+            {service.packages && service.packages.length > 0 ? service.packages.map(pkg => (
                 <div key={pkg._id} className="package-card">
                     <div className="package-info">
                         <h3>{pkg.name}</h3>
                         <span className="package-price">₹{pkg.price}</span>
                     </div>
                     <button className="add-to-cart-btn" onClick={() => handleAddToCart(pkg)}>
-                        Add to Cart
+                        Add
                     </button>
                 </div>
             )) : <p>No packages available for this service yet.</p>}
         </div>
+      </div>
+      
+      {/* Toast Notification */}
+      <div className={`toast-notification ${showToast ? 'show' : ''}`}>
+        {toastMessage}
       </div>
     </div>
   );

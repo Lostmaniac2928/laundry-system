@@ -1,11 +1,13 @@
 import React from 'react';
 
-const HeroSection = () => {
+const HeroSection = ({ isVisible }) => {
   return (
     <div className="hero-container">
-      <h1>FRESH. CLEAN. EFFORTLESS.</h1>
-      <p>Your source for exceptional laundry service.</p>
-      <button className="hero-btn">SCHEDULE PICKUP</button>
+      <div className={`hero-content ${isVisible ? '' : 'fade-out'}`}>
+        <h1>FRESH. CLEAN. EFFORTLESS.</h1>
+        <p>Your source for exceptional laundry and dry cleaning services.</p>
+        <a href="#services" className="hero-btn">SCHEDULE PICKUP</a>
+      </div>
     </div>
   );
 };

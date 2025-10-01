@@ -1,26 +1,26 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className="footer-wrapper">
       <div className="footer-container">
-        <div className="footer-section">
-          <h4>Contact Us</h4>
-          <p>Email: contact@laundrymat.com</p>
-          <p>Phone: +91 12345 67890</p>
-          <p>123 Laundry Lane, Clean City, India</p>
+        <div className="footer-left">
+          <h3 className="footer-logo">WIES</h3>
+          <p className="footer-contact-info">Email: contact@wieslaundry.com</p>
+          <p className="footer-contact-info">Phone: +91 12345 67890</p>
         </div>
-        <div className="footer-section">
+        <div className="footer-right">
           <h4>Quick Links</h4>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/services">Services</a></li>
+          <ul className="footer-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><Link to="/profile/dashboard">My Account</Link></li>
           </ul>
         </div>
-        <div className="footer-bottom">
-          <p>&copy; 2025 LaundryMat Management. All Rights Reserved.</p>
-        </div>
+      </div>
+      <div className="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} WIES Laundry. All Rights Reserved.</p>
       </div>
     </footer>
   );

@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// Get the full backend URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+// The base URL should be an empty string for local development
+const API_BASE_URL = '';
 
 export const getServices = async () => {
-  // Prepend the full backend URL to the request path
+  // The request path should be relative
   const response = await axios.get(`${API_BASE_URL}/api/services`);
   return response.data;
 };
