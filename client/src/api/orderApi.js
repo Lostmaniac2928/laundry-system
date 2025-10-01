@@ -4,7 +4,6 @@ const API_BASE_URL = '';
 
 const getToken = () => JSON.parse(localStorage.getItem('userInfo'))?.token;
 
-// Add 'export' before each function
 export const getMyOrders = async () => {
   const config = { headers: { Authorization: `Bearer ${getToken()}` } };
   const response = await axios.get(`${API_BASE_URL}/api/orders`, config);

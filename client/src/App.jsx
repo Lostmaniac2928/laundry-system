@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import AdminRoute from './components/common/AdminRoute';
+import ScrollToTop from './components/common/ScrollToTop'; // Import the new component
 
 // Page Components
 import HomePage from './pages/HomePage';
@@ -36,9 +38,10 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop /> {/* This component ensures navigation starts at the top */}
       <div className="app-container">
         <Navbar toggleSidebar={toggleSidebar} />
-        {/* We are removing the old sidebar from here for the new design */}
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <main className="main-content">
           <Routes>
             {/* Public Routes */}

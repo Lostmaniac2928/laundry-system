@@ -1,16 +1,26 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchMyOrders } from '../../app/features/orderSlice';
+import React, { useState, useEffect } from 'react';
+import { getMyOrders } from '../../api/orderApi'; // Use the corrected API call
 
 const PlacedOrders = () => {
-  const dispatch = useDispatch();
-  // We select the whole 'orders' state to get loading and error info
-  const { orders, loading, error } = useSelector((state) => state.orders);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // This useEffect now runs every time the component is mounted
   useEffect(() => {
-    dispatch(fetchMyOrders());
-  }, [dispatch]);
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const data = await getMyOrders();
+        setOrders(data);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   return (
     <div className="orders-container">

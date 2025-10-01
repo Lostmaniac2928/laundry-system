@@ -1,32 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
 
-const useScrollAnimation = (options) => {
+const useScrollAnimation = () => {
   const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [intersectionRatio, setIntersectionRatio] = useState(0);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      // If the element is intersecting (visible), set isVisible to true
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-        // We can unobserve after it becomes visible to prevent re-triggering
-        observer.unobserve(ref.current);
+    // Create an observer that calls a function whenever the element's visibility changes
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Update state with the new intersection ratio (0.0 to 1.0)
+        setIntersectionRatio(entry.intersectionRatio);
+      },
+      {
+        // We want to know the ratio, so we create many thresholds
+        threshold: Array.from({ length: 101 }, (_, i) => i / 100),
       }
-    }, options);
+    );
 
     if (ref.current) {
       observer.observe(ref.current);
     }
 
-    // Cleanup function to unobserve the element when the component unmounts
     return () => {
       if (ref.current) {
         observer.unobserve(ref.current);
       }
     };
-  }, [ref, options]);
+  }, [ref]);
 
-  return [ref, isVisible];
+  return [ref, intersectionRatio];
 };
 
 export default useScrollAnimation;

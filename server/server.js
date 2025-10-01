@@ -9,13 +9,13 @@ import userRoutes from './routes/userRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import supportRoutes from './routes/supportRoutes.js'; // Import support routes
 
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 connectDB();
 const app = express();
 
-// Use CORS for local development
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -26,6 +26,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/support', supportRoutes); // Use support routes
 
 
 // --- A simple root route for local testing ---

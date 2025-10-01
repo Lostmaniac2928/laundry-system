@@ -36,15 +36,12 @@ const MyLocations = () => {
   
   const handleCurrentLocation = () => {
     if (navigator.geolocation) {
-        // *** THIS IS THE KEY CHANGE ***
-        // We are adding { enableHighAccuracy: true }
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
                 const newPos = { lat: latitude, lng: longitude };
                 setMarker(newPos);
                 panTo(newPos);
-
                 const geocoder = new window.google.maps.Geocoder();
                 geocoder.geocode({ location: newPos }, (results, status) => {
                     if (status === 'OK' && results[0]) {
@@ -52,10 +49,8 @@ const MyLocations = () => {
                     }
                 });
             },
-            () => {
-                setError('Unable to retrieve your location. Please allow location access.');
-            },
-            { enableHighAccuracy: true } // Request high accuracy
+            () => { setError('Unable to retrieve your location.'); },
+            { enableHighAccuracy: true }
         );
     } else {
         setError('Geolocation is not supported by your browser.');
@@ -63,19 +58,59 @@ const MyLocations = () => {
   };
 
   const onMapClick = useCallback((event) => {
-    // ... (rest of the component logic remains the same)
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    setMarker({ lat, lng });
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        setSelectedPlace(results[0]);
+      }
+    });
   }, []);
 
   const onAutocompleteLoad = useCallback((autocomplete) => {
-    // ...
+    autocompleteRef.current = autocomplete;
   }, []);
 
   const onPlaceChanged = () => {
-    // ...
+    if (autocompleteRef.current) {
+        const place = autocompleteRef.current.getPlace();
+        setSelectedPlace(place);
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        const newPos = { lat, lng };
+        setMarker(newPos);
+        panTo(newPos);
+    }
   };
 
   const handleSubmit = async (e) => {
-    // ...
+    e.preventDefault();
+    if (!selectedPlace) {
+      setError('Please select a location from the search bar or map.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    const addressComponents = selectedPlace.address_components;
+    const getComponent = (type) => addressComponents.find(c => c.types.includes(type))?.long_name || '';
+    const locationData = {
+        address: selectedPlace.formatted_address,
+        city: getComponent('locality') || getComponent('administrative_area_level_2'),
+        postalCode: getComponent('postal_code'),
+    };
+
+    try {
+      const updatedUser = await addLocationApi(locationData);
+      dispatch(setCredentials(updatedUser));
+      setSelectedPlace(null);
+      setMarker(null);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loadError) return "Error loading maps";
@@ -99,15 +134,11 @@ const MyLocations = () => {
 
       <div className="add-location-form">
         <h3>Add a New Location</h3>
-        <p>Search for an address, use your current location, or click on the map.</p>
+        <p>Search, use your current location, or click on the map.</p>
         
         <div className="location-controls">
           <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged}>
-            <input
-              type="text"
-              placeholder="Search for an address..."
-              className="autocomplete-input"
-            />
+            <input type="text" placeholder="Search for an address..." className="autocomplete-input" />
           </Autocomplete>
           <button onClick={handleCurrentLocation} className="btn-current-location">
             📍 Use Current Location

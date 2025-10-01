@@ -20,28 +20,35 @@ const ServiceDetailPage = () => {
         price: pkg.price,
         serviceId: service._id,
         serviceName: service.name,
-        imageUrl: service.imageUrl,
+        imageUrl: service.imageUrl, // Keeping this for cart display, even if not shown here
     };
     dispatch(addToCart(itemToAdd));
     
-    // Logic for the toast notification
     setToastMessage(`${pkg.name} added to cart!`);
     setShowToast(true);
     setTimeout(() => {
       setShowToast(false);
-    }, 2000); // Hide after 2 seconds
+    }, 2000);
   };
 
   if (loading) {
     return <div className="container" style={{paddingTop: '80px'}}><p>Loading...</p></div>;
   }
   
-  // ... (rest of the component remains the same)
-  // ... but include the toast notification JSX at the end
+  if (!service) {
+    return (
+      <div className="container" style={{paddingTop: '80px'}}>
+        <h2>Service Not Found</h2>
+        <p>The service you are looking for may have been removed.</p>
+        <Link to="/">Back to Home</Link>
+      </div>
+    );
+  }
   
   return (
     <div className="service-detail-page-container">
       <div className="service-detail-left">
+        {/* Removed the image display here as per your request */}
         <h1>{service.name}</h1>
         <p>{service.description}</p>
       </div>
@@ -63,8 +70,20 @@ const ServiceDetailPage = () => {
         </div>
       </div>
       
-      {/* Toast Notification */}
-      <div className={`toast-notification ${showToast ? 'show' : ''}`}>
+      {/* Toast notification positioned at the top right of its parent */}
+      <div className={`toast-notification ${showToast ? 'show' : ''}`} style={{
+          position: 'fixed', // Use fixed to position relative to viewport
+          top: '80px',      // Adjust as needed for spacing from top
+          right: '20px',     // Adjust as needed for spacing from right
+          backgroundColor: '#333',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          zIndex: 1000, // Ensure it's above other content
+          transition: 'opacity 0.3s ease-in-out',
+          opacity: showToast ? 1 : 0,
+          pointerEvents: showToast ? 'auto' : 'none', // Allow clicks only when visible
+      }}>
         {toastMessage}
       </div>
     </div>

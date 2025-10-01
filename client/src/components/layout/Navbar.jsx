@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as logoutAction } from '../../app/features/authSlice';
 import { logout as logoutApiCall } from '../../api/authApi';
@@ -9,19 +9,18 @@ const Navbar = ({ toggleSidebar }) => {
   const { cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isScrolled, setScrolled] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Effect to change navbar background on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Effect to close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,12 +31,20 @@ const Navbar = ({ toggleSidebar }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownRef]);
 
+  const handleLogoClick = () => {
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logoutApiCall();
       dispatch(logoutAction());
-      setDropdownOpen(false); // Close dropdown on logout
-      navigate('/login');
+      setDropdownOpen(false);
+      navigate('/'); // Changed to home page
     } catch (error) {
       console.error('Failed to logout', error);
     }
@@ -46,9 +53,9 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <header className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
+        <div onClick={handleLogoClick} className="navbar-logo">
           WIES
-        </Link>
+        </div>
         <div className="menu-icon" onClick={toggleSidebar}>
           ☰
         </div>
@@ -61,8 +68,8 @@ const Navbar = ({ toggleSidebar }) => {
             <div className="profile-dropdown" ref={dropdownRef}>
               <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="profile-dropdown-btn">
                 <span>{userInfo.role === 'admin' ? 'Admin' : userInfo.phoneNumber}</span>
-                <svg className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 10l5 5 5-5H7z" fill="currentColor"/>
+                <svg className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 10l5 5 5-5H7z"/>
                 </svg>
               </button>
               <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
